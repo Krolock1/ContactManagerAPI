@@ -7,7 +7,12 @@ import database from "./mongodb";
 const app = express();
 const port = 3000; // default port to listen
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser());
+
+// start the Express server
+app.listen(port, () => {
+  console.log(`server started at http://localhost:${port}`);
+});
 
 app.use("/api/v1/contacts", contacts);
 
@@ -27,7 +32,7 @@ app.get("/quotes", (req, res) => {
 });
 
 app.post("/quotes", (req, res) => {
-  console.log(req.body);
+  console.log(`receive body ${JSON.stringify(req.body)} `);
   database.client
     .collection("quotes")
     .insertOne(req.body, (err: MongoError, result: WriteOpResult) => {
@@ -35,12 +40,7 @@ app.post("/quotes", (req, res) => {
         return console.log(err);
       }
 
-      console.log("saved to database");
-      res.redirect("/");
+      console.log(`saved to database ${JSON.stringify(result)}`);
+      res.send((result as any).insertedId);
     });
-});
-
-// start the Express server
-app.listen(port, () => {
-  console.log(`server started at http://localhost:${port}`);
 });

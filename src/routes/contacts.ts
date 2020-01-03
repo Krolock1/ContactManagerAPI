@@ -18,22 +18,16 @@ router.get("/", (req, res, next) => {
 
 // CREATE
 router.post("/", (req, res) => {
-  console.log("create");
-  console.log(req.body);
-  var data = req.body;
-  // if (data == {}) {
-  data = { name: "Markus" };
-  console.log(`use ${data} as data`);
-  // }
+  console.log(`receive body ${JSON.stringify(req.body)} `);
   database.client
     .collection(collectionName)
-    .insertOne(data, (err: MongoError, result: WriteOpResult) => {
+    .insertOne(req.body, (err: MongoError, result: any) => {
       if (err) {
         return console.log(err);
       }
-
-      console.log("saved to database");
-      res.redirect("/");
+      const insertId = result.insertedId;
+      console.log(`saved to database with id ${insertId}`);
+      res.send(insertId);
     });
 });
 

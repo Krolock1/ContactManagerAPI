@@ -20,27 +20,3 @@ app.use("/api/v1/contacts", contacts);
 app.get("/", (req, res) => {
   res.send("Hello world!");
 });
-
-app.get("/quotes", (req, res) => {
-  database.client
-    .collection("quotes")
-    .find()
-    .toArray(function(err: MongoError, results: any[]) {
-      console.log(results);
-      res.send(results);
-    });
-});
-
-app.post("/quotes", (req, res) => {
-  console.log(`receive body ${JSON.stringify(req.body)} `);
-  database.client
-    .collection("quotes")
-    .insertOne(req.body, (err: MongoError, result: WriteOpResult) => {
-      if (err) {
-        return console.log(err);
-      }
-
-      console.log(`saved to database ${JSON.stringify(result)}`);
-      res.send((result as any).insertedId);
-    });
-});
